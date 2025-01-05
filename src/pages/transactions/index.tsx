@@ -1,5 +1,6 @@
 import { Header } from '../../components/header'
 import { Summary } from '../../components/summary'
+import { useTransactions } from '../../hooks/useTransactions'
 import { SearchForm } from './componentes/search-form'
 import {
   PriceHighlight,
@@ -8,6 +9,8 @@ import {
 } from './styles'
 
 export function Transaction() {
+  const { transactions } = useTransactions()
+
   return (
     <div>
       <Header />
@@ -17,24 +20,18 @@ export function Transaction() {
         <SearchForm />
         <TransactionsTable>
           <tbody>
-            <tr>
-              <td width="50%">Desenvolvimento de site</td>
-              <td>
-                <PriceHighlight variant="income">R$ 12.000,00</PriceHighlight>
-              </td>
-              <td>Venda</td>
-              <td>13/04/2022</td>
-            </tr>
-            <tr>
-              <td width="50%">Desenvolvimento de site</td>
-              <td>
-                <PriceHighlight variant="outcome">
-                  - R$ 12.000,00
-                </PriceHighlight>
-              </td>
-              <td>Venda</td>
-              <td>13/04/2022</td>
-            </tr>
+            {transactions.map((transaction) => (
+              <tr>
+                <td width="50%">{transaction.description}</td>
+                <td>
+                  <PriceHighlight variant="income">
+                    R$ {transaction.price}
+                  </PriceHighlight>
+                </td>
+                <td>{transaction.type}</td>
+                <td>13/04/2022</td>
+              </tr>
+            ))}
           </tbody>
         </TransactionsTable>
       </TransactionsContainer>
