@@ -21,14 +21,14 @@ export function Transaction() {
         <TransactionsTable>
           <tbody>
             {transactions.map((transaction) => (
-              <tr>
+              <tr key={transaction.id}>
                 <td width="50%">{transaction.description}</td>
                 <td>
-                  <PriceHighlight variant="income">
+                  <PriceHighlight variant={transaction.type}>
                     R$ {transaction.price}
                   </PriceHighlight>
                 </td>
-                <td>{transaction.type}</td>
+                <td>{transaction.category}</td>
                 <td>13/04/2022</td>
               </tr>
             ))}
