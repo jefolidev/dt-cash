@@ -1,4 +1,5 @@
 import { createContext, useEffect, useState } from 'react'
+import { api } from '../lib/axios'
 
 type TransactionTypes = 'income' | 'outcome'
 
@@ -13,6 +14,7 @@ export interface Transaction {
 
 interface TransactionContext {
   transactions: Transaction[]
+  fetchTransactions: (query?: string) => Promise<void>
 }
 
 export const TransactionsContext = createContext({} as TransactionContext)
@@ -24,18 +26,21 @@ export function TransactionsProvider({
 }) {
   const [transactions, setTransactions] = useState<Transaction[]>([])
 
+  async function fetchTransactions(query?: string) {
+    const response = await api.get('/transactions', {
+      params: {
+        q: query,
+      },
+    })
+    setTransactions(response.data)
+  }
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    async function fetchTransactions() {
-      const response = await fetch('http://localhost:3000/transactions')
-      const data = await response.json()
-
-      setTransactions(data)
-    }
     fetchTransactions()
   }, [])
 
   return (
-    <TransactionsContext.Provider value={{ transactions }}>
+    <TransactionsContext.Provider value={{ transactions, fetchTransactions }}>
       {children}
     </TransactionsContext.Provider>
   )
