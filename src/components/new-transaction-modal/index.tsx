@@ -9,7 +9,7 @@ import {
 } from './styles'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import * as z from 'zod'
 
 const newTransactionFormSchema = z.object({
@@ -22,9 +22,11 @@ const newTransactionFormSchema = z.object({
 type NewTransactionFormSchema = z.infer<typeof newTransactionFormSchema>
 
 export function NewTransactionModal() {
-  const { register, handleSubmit } = useForm<NewTransactionFormSchema>({
-    resolver: zodResolver(newTransactionFormSchema),
-  })
+  const { control, register, handleSubmit } = useForm<NewTransactionFormSchema>(
+    {
+      resolver: zodResolver(newTransactionFormSchema),
+    }
+  )
 
   function handleCreateNewTransaction(data: NewTransactionFormSchema) {
     console.log(data)
@@ -53,17 +55,28 @@ export function NewTransactionModal() {
             {...register('category')}
           />
 
-          <TransactionType>
-            <TransactionTypeButton value="income" variant="income">
-              <ArrowCircleUp />
-              Entrada
-            </TransactionTypeButton>
+          <Controller
+            control={control}
+            name="type"
+            render={({ field }) => {
+              return (
+                <TransactionType
+                  onValueChange={field.onChange}
+                  value={field.value}
+                >
+                  <TransactionTypeButton value="income" variant="income">
+                    <ArrowCircleUp />
+                    Entrada
+                  </TransactionTypeButton>
 
-            <TransactionTypeButton value="outcome" variant="outcome">
-              <ArrowCircleDown />
-              Saída
-            </TransactionTypeButton>
-          </TransactionType>
+                  <TransactionTypeButton value="outcome" variant="outcome">
+                    <ArrowCircleDown />
+                    Saída
+                  </TransactionTypeButton>
+                </TransactionType>
+              )
+            }}
+          />
 
           <button type="submit">Cadastrar</button>
         </form>
